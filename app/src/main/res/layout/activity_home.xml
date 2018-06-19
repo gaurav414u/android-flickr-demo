@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.gauravbhola.flickry.ui.home.HomeActivity">
+
+    <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/item_photo"
+            tools:layoutManager="android.support.v7.widget.GridLayoutManager"
+            tools:spanCount="3"
+            android:id="@+id/recycler_view_pics">
+    </android.support.v7.widget.RecyclerView>
+
+
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:gravity="center"
+                  android:visibility="gone"
+                  tools:visibility="visible"
+                  android:orientation="vertical"
+                  android:id="@+id/layout_status">
+
+        <ImageView android:layout_width="100dp"
+                   android:layout_height="100dp"
+                   android:visibility="gone"
+                   android:id="@+id/image_error"
+        />
+
+        <ProgressBar android:layout_width="24dp"
+                     android:layout_height="24dp"
+                     android:layout_gravity="center"
+        />
+
+        <TextView android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+</FrameLayout>

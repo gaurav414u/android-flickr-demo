@@ -1,6 +1,8 @@
 package com.gauravbhola.flickry.ui.home;
 
+import com.gauravbhola.flickry.FlickryApplication;
 import com.gauravbhola.flickry.R;
+import com.gauravbhola.flickry.util.ViewModelFactory;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
@@ -15,12 +17,12 @@ public class HomeActivity extends AppCompatActivity {
     private RecyclerView mPicsRecyclerView;
     private PhotosRecyclerAdapter mAdapter;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        mHomeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
+        ViewModelFactory modelFactory = ((FlickryApplication)getApplication()).getViewModelFactory();
+        mHomeViewModel = ViewModelProviders.of(this, modelFactory).get(HomeViewModel.class);
         getViews();
         setupPicsRecyclerView();
         subscribeToViewModel();
@@ -36,7 +38,6 @@ public class HomeActivity extends AppCompatActivity {
         mAdapter = new PhotosRecyclerAdapter();
         mPicsRecyclerView.setAdapter(mAdapter);
     }
-
 
     private void subscribeToViewModel() {
 

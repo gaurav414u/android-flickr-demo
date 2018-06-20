@@ -2,6 +2,8 @@ package com.gauravbhola.flickry.ui.home;
 
 import com.gauravbhola.flickry.FlickryApplication;
 import com.gauravbhola.flickry.R;
+import com.gauravbhola.flickry.data.model.Photo;
+import com.gauravbhola.flickry.data.model.Resource;
 import com.gauravbhola.flickry.util.ViewModelFactory;
 
 import android.arch.lifecycle.ViewModelProviders;
@@ -10,6 +12,10 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+
+import java.util.List;
+
+import static com.gauravbhola.flickry.data.model.Resource.Status.*;
 
 
 public class HomeActivity extends AppCompatActivity {
@@ -26,6 +32,9 @@ public class HomeActivity extends AppCompatActivity {
         getViews();
         setupPicsRecyclerView();
         subscribeToViewModel();
+        if (savedInstanceState == null) {
+            mHomeViewModel.fetchPhotos("");
+        }
     }
 
     private void getViews() {
@@ -40,6 +49,15 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void subscribeToViewModel() {
+        mHomeViewModel.getResults().observe(this, (val) -> {
+            if (val.status == SUCCESS) {
+                showResults(val.data);
+            }
+        });
+    }
 
+    private void showResults(List<Photo> photoList) {
+        mAdapter.setPhotoList(photoList);
+        mAdapter.notifyDataSetChanged();
     }
 }

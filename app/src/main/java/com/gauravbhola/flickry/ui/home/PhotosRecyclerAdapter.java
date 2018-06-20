@@ -5,6 +5,7 @@ import com.gauravbhola.flickry.R;
 import com.gauravbhola.flickry.data.model.Photo;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -18,9 +19,15 @@ public class PhotosRecyclerAdapter extends RecyclerView.Adapter<PhotosRecyclerAd
         super();
     }
 
+    public void setPhotoList(List<Photo> photoList) {
+        mPhotoList = photoList;
+    }
+
     @Override
     public PhotoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return null;
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        View v = inflater.inflate(R.layout.item_photo, parent, false);
+        return new PhotoViewHolder(v);
     }
 
     @Override

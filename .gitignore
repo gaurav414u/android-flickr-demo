@@ -13,6 +13,9 @@ bin/
 gen/
 out/
 
+# Mac
+.DS_Store
+
 # Gradle files
 .gradle/
 build/

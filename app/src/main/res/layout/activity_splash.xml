@@ -5,15 +5,40 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:clipChildren="false"
         tools:context="com.gauravbhola.flickry.ui.splash.SplashActivity">
 
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hello World!"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+
+    <LinearLayout android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:gravity="bottom|center_horizontal"
+                  android:layout_centerHorizontal="true"
+                  android:clipToPadding="false"
+                  android:clipChildren="false"
+                  android:orientation="vertical"
+                  android:id="@+id/container_anim_items" app:layout_constraintEnd_toEndOf="parent"
+                  android:layout_marginEnd="8dp" app:layout_constraintStart_toStartOf="parent"
+                  android:layout_marginStart="8dp" app:layout_constraintBottom_toBottomOf="parent"
+                  android:layout_marginBottom="8dp" app:layout_constraintTop_toTopOf="parent"
+                  android:layout_marginTop="8dp" app:layout_constraintVertical_bias="0.365">
+
+        <ImageView android:layout_width="120dp"
+                   android:layout_height="120dp"
+                   android:src="@mipmap/ic_launcher"
+                   android:id="@+id/iv_bug"
+        />
+
+        <TextView android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="@string/app_name"
+                  android:layout_marginTop="36dp"
+                  android:letterSpacing="0.8"
+                  android:textAllCaps="true"
+                  android:textStyle="bold"
+                  android:textSize="24sp"
+                  android:id="@+id/tv_appname"
+        />
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

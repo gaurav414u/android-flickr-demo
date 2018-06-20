@@ -9,9 +9,17 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.LayoutAnimationController;
+import android.view.animation.TranslateAnimation;
+import android.widget.LinearLayout;
 
 public class SplashActivity extends AppCompatActivity {
-    SplashViewModel mSplashViewModel;
+    private SplashViewModel mSplashViewModel;
+    private LinearLayout mAnimContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,7 +28,13 @@ public class SplashActivity extends AppCompatActivity {
         ViewModelFactory modelFactory = ((FlickryApplication)getApplication()).getViewModelFactory();
         mSplashViewModel = ViewModelProviders.of(this, modelFactory).get(SplashViewModel.class);
         mSplashViewModel.splashDisplayed();
+        getViews();
         subscribeToViewModel();
+        mAnimContainer.setLayoutAnimation(getListAnimationController(1000));
+    }
+
+    private void getViews() {
+        mAnimContainer = findViewById(R.id.container_anim_items);
     }
 
     private void subscribeToViewModel() {
@@ -30,5 +44,22 @@ public class SplashActivity extends AppCompatActivity {
     private void navigateToHome() {
         startActivity(new Intent(this, HomeActivity.class));
         finish();
+    }
+
+    public LayoutAnimationController getListAnimationController(long animationDuration) {
+        AnimationSet set = new AnimationSet(true);
+        Animation animation = new AlphaAnimation(0.0f, 1.0f);
+        animation.setDuration(animationDuration);
+        set.addAnimation(animation);
+
+        animation = new TranslateAnimation(
+                Animation.RELATIVE_TO_SELF, 0.0f,Animation.RELATIVE_TO_SELF, 0.0f,
+                Animation.ABSOLUTE, 300.0f,Animation.ABSOLUTE, 0.0f
+        );
+        animation.setDuration(animationDuration);
+        set.setInterpolator(new AccelerateDecelerateInterpolator());
+        set.addAnimation(animation);
+
+        return new LayoutAnimationController(set, 0.2f);
     }
 }

@@ -27,6 +27,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         setContentView(R.layout.activity_home);
         ViewModelFactory modelFactory = ((FlickryApplication)getApplication()).getViewModelFactory();
         mHomeViewModel = ViewModelProviders.of(this, modelFactory).get(HomeViewModel.class);

@@ -29,5 +29,6 @@ public class SplashActivity extends AppCompatActivity {
 
     private void navigateToHome() {
         startActivity(new Intent(this, HomeActivity.class));
+        finish();
     }
 }

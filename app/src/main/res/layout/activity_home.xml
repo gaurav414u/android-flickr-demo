@@ -1,43 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<android.support.constraint.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
         tools:context="com.gauravbhola.flickry.ui.home.HomeActivity">
 
-    <android.support.v7.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:listitem="@layout/item_photo"
-            tools:layoutManager="android.support.v7.widget.GridLayoutManager"
-            tools:spanCount="3"
-            android:id="@+id/recycler_view_pics">
-    </android.support.v7.widget.RecyclerView>
-
-
     <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="?android:attr/actionBarSize"
+                  android:orientation="horizontal"
+                  app:layout_constraintTop_toTopOf="parent"
+                  app:layout_constraintBottom_toTopOf="@+id/layout_content"
+                  style="@style/AppTheme.ActionBarStyle"
+                  android:id="@+id/header">
+
+        <TextView android:layout_width="match_parent"
                   android:layout_height="match_parent"
+                  android:textSize="20dp"
                   android:gravity="center"
-                  android:visibility="gone"
-                  tools:visibility="visible"
-                  android:orientation="vertical"
-                  android:id="@+id/layout_status">
-
-        <ImageView android:layout_width="100dp"
-                   android:layout_height="100dp"
-                   android:visibility="gone"
-                   android:id="@+id/image_error"
+                  tools:text="Flickry"
+                  android:id="@+id/tv_title"
         />
-
-        <ProgressBar android:layout_width="24dp"
-                     android:layout_height="24dp"
-                     android:layout_gravity="center"
-        />
-
-        <TextView android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"/>
-
     </LinearLayout>
 
-</FrameLayout>
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:id="@+id/layout_content"
+            app:layout_constraintTop_toBottomOf="@id/header"
+            app:layout_constraintBottom_toTopOf="@+id/layout_footer">
+
+        <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:listitem="@layout/item_photo"
+                tools:layoutManager="android.support.v7.widget.GridLayoutManager"
+                tools:spanCount="3"
+                android:id="@+id/recycler_view_pics">
+        </android.support.v7.widget.RecyclerView>
+
+
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:gravity="center"
+                      android:visibility="gone"
+                      tools:visibility="visible"
+                      android:orientation="vertical"
+                      android:id="@+id/layout_status">
+
+            <ImageView android:layout_width="100dp"
+                       android:layout_height="100dp"
+                       android:visibility="gone"
+                       android:id="@+id/image_error"
+            />
+
+            <ProgressBar android:layout_width="24dp"
+                         android:layout_height="24dp"
+                         android:layout_gravity="center"
+            />
+
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+    </FrameLayout>
+
+    <FrameLayout android:layout_width="match_parent"
+                 android:layout_height="?android:attr/actionBarSize"
+                 android:background="@color/colorPrimary"
+                 app:layout_constraintBottom_toBottomOf="parent"
+                 app:layout_constraintTop_toBottomOf="@+id/layout_content"
+                 android:id="@+id/layout_footer"
+                 android:padding="8dp">
+
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:orientation="horizontal"
+                      android:gravity="center_vertical"
+                      android:paddingLeft="8dp"
+                      android:paddingRight="8dp"
+                      android:background="@drawable/search_bg">
+
+            <ImageView android:layout_width="24dp"
+                       android:layout_height="24dp"
+                       android:src="@drawable/ic_search_black_24dp"
+            />
+            <EditText android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:layout_marginLeft="8dp"
+                      android:hint="Filter"
+                      android:minLines="1"
+                      android:maxLines="1"
+                      android:id="@+id/et_search"
+                      android:background="@android:color/transparent"
+            />
+        </LinearLayout>
+
+
+    </FrameLayout>
+</android.support.constraint.ConstraintLayout>

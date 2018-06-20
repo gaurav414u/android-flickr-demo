@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 
 import java.util.List;
 
@@ -44,7 +45,11 @@ public class HomeActivity extends AppCompatActivity {
     private void setupPicsRecyclerView() {
         GridLayoutManager manager = new GridLayoutManager(getApplicationContext(), 3);
         mPicsRecyclerView.setLayoutManager(manager);
+        mPicsRecyclerView.addItemDecoration(new SpacesItemDecoration(
+                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1.5f, getResources().getDisplayMetrics())
+        ));
         mAdapter = new PhotosRecyclerAdapter();
+
         mPicsRecyclerView.setAdapter(mAdapter);
     }
 

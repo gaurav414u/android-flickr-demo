@@ -9,5 +9,6 @@
                android:layout_height="match_parent"
                android:id="@+id/image_photo"
                tools:src="@tools:sample/avatars"
+               android:scaleType="centerCrop"
     />
 </com.gauravbhola.flickry.ui.common.SquareFrameLayout>

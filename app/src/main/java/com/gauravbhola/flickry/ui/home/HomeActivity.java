@@ -16,9 +16,12 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.TypedValue;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.List;
@@ -31,6 +34,10 @@ public class HomeActivity extends AppCompatActivity {
     private RecyclerView mPicsRecyclerView;
     private TextView mTitleView;
     private EditText mSearchView;
+    private View mStatusLayout;
+    private ProgressBar mProgressBar;
+    private TextView mMessageView;
+    private ImageView mErrorImageView;
     private PhotosRecyclerAdapter mAdapter;
 
     @Override
@@ -54,6 +61,10 @@ public class HomeActivity extends AppCompatActivity {
         mPicsRecyclerView = findViewById(R.id.recycler_view_pics);
         mSearchView = findViewById(R.id.et_search);
         mTitleView = findViewById(R.id.tv_title);
+        mStatusLayout = findViewById(R.id.layout_status);
+        mProgressBar = findViewById(R.id.progressbar);
+        mMessageView = findViewById(R.id.tv_message);
+        mErrorImageView = findViewById(R.id.image_error);
     }
 
     private void setupSearchView() {
@@ -111,10 +122,31 @@ public class HomeActivity extends AppCompatActivity {
             if (val.status == SUCCESS) {
                 showResults(val.data);
             }
+            if (val.status == ERROR) {
+                showError(val.message);
+            }
+            if (val.status == LOADING) {
+                showLoading();
+            }
         });
     }
 
+    private void showLoading() {
+        mStatusLayout.setVisibility(View.VISIBLE);
+        mMessageView.setText("Loading pictures");
+        mProgressBar.setVisibility(View.VISIBLE);
+        mErrorImageView.setVisibility(View.GONE);
+    }
+
+    private void showError(String message){
+        mStatusLayout.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.GONE);
+        mMessageView.setText(message);
+        mErrorImageView.setVisibility(View.VISIBLE);
+    }
+
     private void showResults(List<Photo> photoList) {
+        mStatusLayout.setVisibility(View.GONE);
         mAdapter.setPhotoList(photoList);
         mAdapter.notifyDataSetChanged();
     }

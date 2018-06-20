@@ -48,19 +48,25 @@
                       android:orientation="vertical"
                       android:id="@+id/layout_status">
 
-            <ImageView android:layout_width="100dp"
-                       android:layout_height="100dp"
+            <ImageView android:layout_width="56dp"
+                       android:layout_height="56dp"
                        android:visibility="gone"
+                       android:src="@drawable/ic_error_black_24dp"
                        android:id="@+id/image_error"
             />
 
-            <ProgressBar android:layout_width="24dp"
-                         android:layout_height="24dp"
+            <ProgressBar android:layout_width="56dp"
+                         android:layout_height="56dp"
                          android:layout_gravity="center"
+                         android:id="@+id/progressbar"
             />
 
             <TextView android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"/>
+                      android:layout_height="wrap_content"
+                      android:layout_marginTop="4dp"
+                      android:textSize="16dp"
+                      android:id="@+id/tv_message"
+            />
 
         </LinearLayout>
     </FrameLayout>

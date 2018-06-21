@@ -28,7 +28,12 @@ public class GetRecentPhotosTask implements Runnable {
 
     @Override
     public void run() {
-        Call call = mFlickrApiService.getRecentPhotos(mQuery);
+        Call call = null;
+        if (mQuery.equals("")) {
+            call = mFlickrApiService.getRecentPhotos();
+        } else {
+            call = mFlickrApiService.searchPhotos(mQuery);
+        }
         try {
             Response<GetRecentResponse> response = call.execute();
             ApiResponse apiResponse = new ApiResponse(response);

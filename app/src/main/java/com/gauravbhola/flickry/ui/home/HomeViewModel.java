@@ -4,24 +4,25 @@ import com.gauravbhola.flickry.data.ImagesRepository;
 import com.gauravbhola.flickry.data.model.Photo;
 import com.gauravbhola.flickry.data.model.Resource;
 import com.gauravbhola.flickry.data.remote.FlickrApiService;
-import com.gauravbhola.flickry.util.AbsentLiveData;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
+import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.util.Pair;
 
 import java.util.List;
-import static com.gauravbhola.flickry.data.model.Resource.Status.*;
 
 
 public class HomeViewModel extends AndroidViewModel {
     private ImagesRepository mImagesRepository;
     private FlickrApiService mFlickrApiService;
     private MutableLiveData<String> mQuery = new MutableLiveData<>();
-    private LiveData<Resource<List<Photo>>> mResults;
+    private LiveData<Pair<Resource<List<Photo>>, String>> mResults;
+    private Handler mHandler = new Handler();
 
     public HomeViewModel(@NonNull Application application, ImagesRepository imagesRepository, FlickrApiService flickrApiService) {
         super(application);
@@ -34,20 +35,12 @@ public class HomeViewModel extends AndroidViewModel {
 //            }
             return Transformations.map(mImagesRepository.getPhotos(query), (val) -> {
                 if (val.data == null) {
-                    return val;
+                    return new Pair<>(val, query);
                 }
                 injectUrl(val.data);
-                return val;
+                return new Pair<>(val, query);
             });
         });
-    }
-
-    public void fetchPhotos(String query) {
-        mQuery.setValue(query);
-    }
-
-    public LiveData<Resource<List<Photo>>> getResults() {
-        return mResults;
     }
 
     private void injectUrl(List<Photo> photos) {
@@ -56,5 +49,19 @@ public class HomeViewModel extends AndroidViewModel {
                     photo.getFarm(), photo.getServer(), photo.getId(), photo.getSecret()
             ));
         }
+    }
+
+    void searchTextChanged(final String text) {
+        mHandler.removeCallbacksAndMessages(null);
+        mHandler.postDelayed(() -> this.fetchPhotos(text), 1000);
+    }
+
+    void fetchPhotos(String query) {
+        mHandler.removeCallbacksAndMessages(null);
+        mQuery.setValue(query);
+    }
+
+    LiveData<Pair<Resource<List<Photo>>, String>> getResults() {
+        return mResults;
     }
 }

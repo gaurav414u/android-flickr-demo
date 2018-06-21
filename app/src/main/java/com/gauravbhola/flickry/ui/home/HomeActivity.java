@@ -3,6 +3,7 @@ package com.gauravbhola.flickry.ui.home;
 import com.gauravbhola.flickry.FlickryApplication;
 import com.gauravbhola.flickry.R;
 import com.gauravbhola.flickry.data.model.Photo;
+import com.gauravbhola.flickry.data.model.Resource;
 import com.gauravbhola.flickry.util.ViewModelFactory;
 
 import android.arch.lifecycle.ViewModelProviders;
@@ -14,7 +15,11 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -74,6 +79,7 @@ public class HomeActivity extends AppCompatActivity {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 //mViewModel.search(v.getText().toString());
                 dismissKeyboard(v.getWindowToken());
+                mHomeViewModel.fetchPhotos(mSearchView.getText().toString());
                 return true;
             }
             return false;
@@ -87,7 +93,7 @@ public class HomeActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                //mViewModel.searchTextChanged(charSequence.toString());
+                mHomeViewModel.searchTextChanged(charSequence.toString());
             }
 
             @Override
@@ -117,15 +123,35 @@ public class HomeActivity extends AppCompatActivity {
         mPicsRecyclerView.setAdapter(mAdapter);
     }
 
+    private Spannable getHeaderText(String query) {
+        String finalString = "Showing results for " + query;
+        Spannable spannable = new SpannableString(finalString);
+
+        int color = getResources().getColor(android.R.color.holo_blue_dark);
+
+        spannable.setSpan(new ForegroundColorSpan(color),
+                finalString.indexOf(query),
+                finalString.indexOf(query) + query.length() ,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannable.setSpan(new RelativeSizeSpan(1.2f),
+                finalString.indexOf(query),
+                finalString.indexOf(query) + query.length() ,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return spannable;
+    }
+
+
     private void subscribeToViewModel() {
         mHomeViewModel.getResults().observe(this, (val) -> {
-            if (val.status == SUCCESS) {
-                showResults(val.data);
+            Resource<List<Photo>> result = val.first;
+
+            if (result.status == SUCCESS) {
+                showResults(result.data, val.second);
             }
-            if (val.status == ERROR) {
-                showError(val.message);
+            if (result.status == ERROR) {
+                showError(result.message);
             }
-            if (val.status == LOADING) {
+            if (result.status == LOADING) {
                 showLoading();
             }
         });
@@ -136,6 +162,9 @@ public class HomeActivity extends AppCompatActivity {
         mMessageView.setText("Loading pictures");
         mProgressBar.setVisibility(View.VISIBLE);
         mErrorImageView.setVisibility(View.GONE);
+
+        mAdapter.setPhotoList(null);
+        mAdapter.notifyDataSetChanged();
     }
 
     private void showError(String message){
@@ -145,7 +174,13 @@ public class HomeActivity extends AppCompatActivity {
         mErrorImageView.setVisibility(View.VISIBLE);
     }
 
-    private void showResults(List<Photo> photoList) {
+
+    private void showResults(List<Photo> photoList, String query) {
+        if (query.equals("")) {
+            mTitleView.setText(R.string.app_name);
+        } else {
+            mTitleView.setText(getHeaderText(query));
+        }
         mStatusLayout.setVisibility(View.GONE);
         mAdapter.setPhotoList(photoList);
         mAdapter.notifyDataSetChanged();

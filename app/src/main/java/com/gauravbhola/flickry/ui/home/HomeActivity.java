@@ -4,6 +4,7 @@ import com.gauravbhola.flickry.FlickryApplication;
 import com.gauravbhola.flickry.R;
 import com.gauravbhola.flickry.data.model.Photo;
 import com.gauravbhola.flickry.data.model.Resource;
+import com.gauravbhola.flickry.data.remote.PhotosResponse;
 import com.gauravbhola.flickry.util.ViewModelFactory;
 
 import android.arch.lifecycle.ViewModelProviders;
@@ -12,6 +13,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputType;
@@ -120,6 +122,18 @@ public class HomeActivity extends AppCompatActivity {
         mAdapter = new PhotosRecyclerAdapter();
 
         mPicsRecyclerView.setAdapter(mAdapter);
+        mPicsRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                LinearLayoutManager layoutManager = (LinearLayoutManager)
+                        recyclerView.getLayoutManager();
+                int lastPosition = layoutManager
+                        .findLastVisibleItemPosition();
+                if (lastPosition == mAdapter.getItemCount() - 1) {
+                    mHomeViewModel.loadNextPage();
+                }
+            }
+        });
     }
 
     private Spannable getHeaderText(String query) {
@@ -141,24 +155,30 @@ public class HomeActivity extends AppCompatActivity {
 
 
     private void subscribeToViewModel() {
-        mHomeViewModel.getResults().observe(this, (val) -> {
-            Resource<List<Photo>> result = val.first;
-
-            if (result.status == SUCCESS) {
-                showResults(result.data, val.second);
-            }
+        mHomeViewModel.getResultsState().observe(this, (val) -> {
+            Resource<PhotosResponse> result = val.first;
             if (result.status == ERROR) {
                 showError(result.message);
             }
             if (result.status == LOADING) {
-                showLoading();
+                showLoading(val.second);
+            }
+        });
+
+        mHomeViewModel.getAllResults().observe(this, val -> {
+            if (val != null) {
+                showResults(val.first, val.second);
             }
         });
     }
 
-    private void showLoading() {
+    private void showLoading(String query) {
         mStatusLayout.setVisibility(View.VISIBLE);
-        mMessageView.setText("Loading pictures");
+        if (query.trim().equals("")) {
+            mMessageView.setText("Loading pictures");
+        } else {
+            mMessageView.setText("Loading pictures for '" + query+"'");
+        }
         mProgressBar.setVisibility(View.VISIBLE);
         mErrorImageView.setVisibility(View.GONE);
 

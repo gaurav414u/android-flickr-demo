@@ -4,10 +4,12 @@ import com.gauravbhola.flickry.data.ImagesRepository;
 import com.gauravbhola.flickry.data.model.Photo;
 import com.gauravbhola.flickry.data.model.Resource;
 import com.gauravbhola.flickry.data.remote.FlickrApiService;
+import com.gauravbhola.flickry.data.remote.PhotosResponse;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.os.Handler;
@@ -21,26 +23,60 @@ public class HomeViewModel extends AndroidViewModel {
     private ImagesRepository mImagesRepository;
     private FlickrApiService mFlickrApiService;
     private MutableLiveData<String> mQuery = new MutableLiveData<>();
-    private LiveData<Pair<Resource<List<Photo>>, String>> mResults;
+    private MutableLiveData<String> mLoadMoreWithQuery = new MutableLiveData<>();
+    private LiveData<Pair<Resource<PhotosResponse>, String>> mResultsState;
+    private MediatorLiveData<Pair<List<Photo>, String>> mAllResults;
     private Handler mHandler = new Handler();
+    private int mCurrentPage;
+//    private LiveData<Resource<PhotosResponse>> mLoadMoreState;
+    private LiveData<Pair<Resource<PhotosResponse>, String>> mLoadMoreState;
 
     public HomeViewModel(@NonNull Application application, ImagesRepository imagesRepository, FlickrApiService flickrApiService) {
         super(application);
         mImagesRepository = imagesRepository;
         mFlickrApiService = flickrApiService;
 
-        mResults = Transformations.switchMap(mQuery, (query) ->
-                Transformations.map(mImagesRepository.getPhotos(query), (val) -> {
-                    if (val.data == null) {
-                        return new Pair<>(val, query);
-                    }
-                    injectUrl(val.data);
+        mAllResults = new MediatorLiveData<>();
+        mResultsState = Transformations.switchMap(mQuery, (query) -> {
+            
+            mAllResults.removeSource(mResultsState);
+            mAllResults.addSource(mResultsState, val -> {
+                if (val.first.status == Resource.Status.SUCCESS
+                        && mResultsState.getValue().second.equals(query)) {
+                    // If the resultsState query is equal to the given query, only then set the value in results
+                    mAllResults.setValue(new Pair(val.first.data.getPhoto(), query));
+                    // Remove this source from AllResults
+                    mAllResults.removeSource(mResultsState);
+                } else {
+                    mAllResults.setValue(null);
+                }
+            });
+
+            return Transformations.map(mImagesRepository.getPhotos(query), (val) -> {
+                if (val.data == null) {
                     return new Pair<>(val, query);
-                })
-        );
+                }
+                mCurrentPage = 1;
+                injectUrl(val.data);
+                return new Pair<>(val, query);
+            });
+        });
+
+
+        mLoadMoreState = Transformations.switchMap(mLoadMoreWithQuery, (query) -> {
+            return Transformations.map(mImagesRepository.getNextPage(query, mCurrentPage), (val) -> {
+                if (val.data == null) {
+                    return new Pair<>(val, query);
+                }
+                injectUrl(val.data);
+                return new Pair<>(val, query);
+            });
+        });
+
     }
 
-    private void injectUrl(List<Photo> photos) {
+    private void injectUrl(PhotosResponse response) {
+        List<Photo> photos = response.getPhoto();
         for (Photo photo : photos) {
             photo.setUrl(String.format("https://farm%d.staticflickr.com/%s/%s_%s.jpg",
                     photo.getFarm(), photo.getServer(), photo.getId(), photo.getSecret()
@@ -58,11 +94,51 @@ public class HomeViewModel extends AndroidViewModel {
         mQuery.setValue(query);
     }
 
+    void loadNextPage() {
+        if(mAllResults.getValue() == null) {
+            // No existing data
+            return;
+        }
+        if (mLoadMoreState.getValue() != null && mLoadMoreState.getValue().first.status == Resource.Status.LOADING
+                && mLoadMoreWithQuery.getValue().equals(mQuery.getValue())) {
+            // If already loading more data for the same query, return
+            return;
+        }
+        mLoadMoreWithQuery.setValue(mQuery.getValue());
+
+        mAllResults.removeSource(mLoadMoreState);
+        mAllResults.addSource(mLoadMoreState, val -> {
+            if(val.first.status == Resource.Status.SUCCESS
+                    && mAllResults.getValue().second.equals(val.second)) {
+                mCurrentPage = val.first.data.getPage();
+
+                List<Photo> existingResults = mAllResults.getValue().first;
+                existingResults.addAll(val.first.data.getPhoto());
+                mAllResults.setValue(new Pair(existingResults, val.second));
+            }
+            if(val.first.status == Resource.Status.SUCCESS) {
+                mAllResults.removeSource(mLoadMoreState);
+            }
+            if(val.first.status == Resource.Status.ERROR) {
+                mAllResults.removeSource(mLoadMoreState);
+            }
+        });
+    }
+
     void refresh() {
         fetchPhotos(mQuery.getValue());
     }
 
-    LiveData<Pair<Resource<List<Photo>>, String>> getResults() {
-        return mResults;
+    public LiveData<Pair<Resource<PhotosResponse>, String>> getResultsState() {
+        return mResultsState;
+    }
+
+
+    public MediatorLiveData<Pair<List<Photo>, String>> getAllResults() {
+        return mAllResults;
+    }
+
+    public LiveData<Pair<Resource<PhotosResponse>, String>> getLoadMoreState() {
+        return mLoadMoreState;
     }
 }

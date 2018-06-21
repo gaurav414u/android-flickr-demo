@@ -7,8 +7,8 @@ import retrofit2.http.Query;
 
 public interface FlickrApiService {
     @GET("?method=flickr.photos.getRecent&api_key=3e7cc266ae2b0e0d78e279ce8e361736&format=json&nojsoncallback=?")
-    public Call<GetRecentResponse> getRecentPhotos();
+    public Call<GetRecentResponse> getRecentPhotos(@Query("page") int page, @Query("per_page") int perPage);
 
     @GET("?method=flickr.photos.search&api_key=3e7cc266ae2b0e0d78e279ce8e361736&format=json&nojsoncallback=?")
-    public Call<GetRecentResponse> searchPhotos(@Query("text") String searchQuery);
+    public Call<GetRecentResponse> searchPhotos(@Query("text") String searchQuery, @Query("page") int page, @Query("per_page") int perPage);
 }

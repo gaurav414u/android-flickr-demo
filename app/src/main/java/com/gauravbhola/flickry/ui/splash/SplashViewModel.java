@@ -9,7 +9,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 
 public class SplashViewModel extends AndroidViewModel {
-    private Handler mHandler = new Handler();
+    protected Handler mHandler = new Handler();
     private SingleLiveEvent<Void> mNavigationCommand = new SingleLiveEvent<>();
 
     public SplashViewModel(@NonNull Application application) {

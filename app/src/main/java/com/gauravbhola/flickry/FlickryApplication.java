@@ -26,14 +26,14 @@ public class FlickryApplication extends Application {
         // Create global dependencies
         mFlickrApiService = provideFlickrApiService(new GsonBuilder().create());
         mImagesRepository = provideImagesRepository(mFlickrApiService);
-        mViewModelFactory = provideViewModelFactory(mImagesRepository, mFlickrApiService);
+        mViewModelFactory = provideViewModelFactory(mImagesRepository);
     }
 
     private FlickrApiService provideFlickrApiService(Gson gson) {
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
         Retrofit.Builder builder = new Retrofit.Builder()
                 .baseUrl("https://api.flickr.com/services/rest/")
-                .addConverterFactory(GsonConverterFactory.create(gson));;
+                .addConverterFactory(GsonConverterFactory.create(gson));
         Retrofit retrofit = builder.client(httpClientBuilder.build())
                 .build();
         return retrofit.create(FlickrApiService.class);
@@ -43,8 +43,8 @@ public class FlickryApplication extends Application {
         return new ImagesRepository(flickrApiService, this);
     }
 
-    private ViewModelFactory provideViewModelFactory(ImagesRepository imagesRepository, FlickrApiService flickrApiService) {
-        return new ViewModelFactory(imagesRepository, flickrApiService, this);
+    private ViewModelFactory provideViewModelFactory(ImagesRepository imagesRepository) {
+        return new ViewModelFactory(imagesRepository, this);
     }
 
 

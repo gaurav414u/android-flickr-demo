@@ -112,7 +112,9 @@ public class HomeActivity extends AppCompatActivity {
 
     private void dismissKeyboard(IBinder windowToken) {
         InputMethodManager imm = (InputMethodManager) this.getSystemService(INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(windowToken, 0);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(windowToken, 0);
+        }
     }
 
     private void setupPicsRecyclerView() {
@@ -173,15 +175,14 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         mHomeViewModel.getLoadMoreState().observe(this, val -> {
+            if (val == null) {
+                return;
+            }
             if (val.first.status == LOADING) {
                 mLoadMoreProgressBar.setVisibility(View.VISIBLE);
             } else {
                 mLoadMoreProgressBar.setVisibility(View.GONE);
             }
-        });
-
-        mHomeViewModel.getClearSearchEvent().observe(this, val -> {
-            mSearchView.setText("");
         });
     }
 

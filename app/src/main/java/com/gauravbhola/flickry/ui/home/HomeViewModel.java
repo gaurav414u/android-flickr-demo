@@ -3,7 +3,6 @@ package com.gauravbhola.flickry.ui.home;
 import com.gauravbhola.flickry.data.ImagesRepository;
 import com.gauravbhola.flickry.data.model.Photo;
 import com.gauravbhola.flickry.data.model.Resource;
-import com.gauravbhola.flickry.data.remote.FlickrApiService;
 import com.gauravbhola.flickry.data.remote.PhotosResponse;
 
 import android.app.Application;
@@ -21,20 +20,17 @@ import java.util.List;
 
 public class HomeViewModel extends AndroidViewModel {
     private ImagesRepository mImagesRepository;
-    private FlickrApiService mFlickrApiService;
     private MutableLiveData<String> mQuery = new MutableLiveData<>();
     private MutableLiveData<String> mLoadMoreWithQuery = new MutableLiveData<>();
     private LiveData<Pair<Resource<PhotosResponse>, String>> mResultsState;
     private MediatorLiveData<Pair<List<Photo>, String>> mAllResults;
     private Handler mHandler = new Handler();
     private int mCurrentPage;
-//    private LiveData<Resource<PhotosResponse>> mLoadMoreState;
     private LiveData<Pair<Resource<PhotosResponse>, String>> mLoadMoreState;
 
-    public HomeViewModel(@NonNull Application application, ImagesRepository imagesRepository, FlickrApiService flickrApiService) {
+    public HomeViewModel(@NonNull Application application, ImagesRepository imagesRepository) {
         super(application);
         mImagesRepository = imagesRepository;
-        mFlickrApiService = flickrApiService;
 
         mAllResults = new MediatorLiveData<>();
         mResultsState = Transformations.switchMap(mQuery, (query) -> {
@@ -63,15 +59,14 @@ public class HomeViewModel extends AndroidViewModel {
         });
 
 
-        mLoadMoreState = Transformations.switchMap(mLoadMoreWithQuery, (query) -> {
-            return Transformations.map(mImagesRepository.getNextPage(query, mCurrentPage), (val) -> {
-                if (val.data == null) {
-                    return new Pair<>(val, query);
-                }
-                injectUrl(val.data);
+        mLoadMoreState = Transformations.switchMap(mLoadMoreWithQuery, (query) ->
+                Transformations.map(mImagesRepository.getNextPage(query, mCurrentPage), (val) -> {
+            if (val.data == null) {
                 return new Pair<>(val, query);
-            });
-        });
+            }
+            injectUrl(val.data);
+            return new Pair<>(val, query);
+        }));
 
     }
 
@@ -84,12 +79,20 @@ public class HomeViewModel extends AndroidViewModel {
         }
     }
 
-    void searchTextChanged(final String text) {
+    void searchTextChanged(@NonNull final String text) {
         mHandler.removeCallbacksAndMessages(null);
         mHandler.postDelayed(() -> this.fetchPhotos(text), 1000);
     }
 
     void fetchPhotos(String query) {
+        // Last known query is equal to this query
+        // and result state is success, then don't do anything
+        if (query.equals(mQuery.getValue())
+                && mResultsState.getValue().first != null
+                && query.equals(mResultsState.getValue().second)
+                && mResultsState.getValue().first.status == Resource.Status.SUCCESS) {
+            return;
+        }
         mHandler.removeCallbacksAndMessages(null);
         mQuery.setValue(query);
     }

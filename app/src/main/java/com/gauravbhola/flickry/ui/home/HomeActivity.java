@@ -43,6 +43,7 @@ public class HomeActivity extends AppCompatActivity {
     private EditText mSearchView;
     private View mStatusLayout;
     private ProgressBar mProgressBar;
+    private ProgressBar mLoadMoreProgressBar;
     private TextView mMessageView;
     private ImageView mErrorImageView;
     private PhotosRecyclerAdapter mAdapter;
@@ -70,6 +71,7 @@ public class HomeActivity extends AppCompatActivity {
         mTitleView = findViewById(R.id.tv_title);
         mStatusLayout = findViewById(R.id.layout_status);
         mProgressBar = findViewById(R.id.progressbar);
+        mLoadMoreProgressBar = findViewById(R.id.progressbar_loadmore);
         mMessageView = findViewById(R.id.tv_message);
         mErrorImageView = findViewById(R.id.image_error);
     }
@@ -136,8 +138,7 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    private Spannable getHeaderText(String query) {
-        String finalString = "Showing results for " + query;
+    private Spannable getStyledText(String finalString, String query) {
         Spannable spannable = new SpannableString(finalString);
 
         int color = getResources().getColor(android.R.color.holo_blue_dark);
@@ -170,6 +171,18 @@ public class HomeActivity extends AppCompatActivity {
                 showResults(val.first, val.second);
             }
         });
+
+        mHomeViewModel.getLoadMoreState().observe(this, val -> {
+            if (val.first.status == LOADING) {
+                mLoadMoreProgressBar.setVisibility(View.VISIBLE);
+            } else {
+                mLoadMoreProgressBar.setVisibility(View.GONE);
+            }
+        });
+
+        mHomeViewModel.getClearSearchEvent().observe(this, val -> {
+            mSearchView.setText("");
+        });
     }
 
     private void showLoading(String query) {
@@ -198,10 +211,22 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void showResults(List<Photo> photoList, String query) {
+        if (photoList.size() == 0) {
+            mStatusLayout.setVisibility(View.VISIBLE);
+            mProgressBar.setVisibility(View.GONE);
+            mMessageView.setVisibility(View.VISIBLE);
+            String finalString = "No results found for " + query;
+            mMessageView.setText(getStyledText(finalString, query));
+            mErrorImageView.setVisibility(View.GONE);
+            mTitleView.setText(R.string.app_name);
+            return;
+        }
+
         if (query.equals("")) {
             mTitleView.setText(R.string.app_name);
         } else {
-            mTitleView.setText(getHeaderText(query));
+            String finalString = "Showing results for " + query;
+            mTitleView.setText(getStyledText(finalString, query));
         }
         mStatusLayout.setVisibility(View.GONE);
         mAdapter.setPhotoList(photoList);

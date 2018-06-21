@@ -72,6 +72,16 @@
         </LinearLayout>
     </FrameLayout>
 
+    <ProgressBar
+            android:id="@+id/progressbar_loadmore"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:indeterminateOnly="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/layout_footer"
+    />
+
     <FrameLayout android:layout_width="match_parent"
                  android:layout_height="?android:attr/actionBarSize"
                  android:background="@color/colorPrimary"

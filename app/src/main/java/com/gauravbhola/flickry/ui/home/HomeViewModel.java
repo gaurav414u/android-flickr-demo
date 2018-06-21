@@ -61,6 +61,10 @@ public class HomeViewModel extends AndroidViewModel {
         mQuery.setValue(query);
     }
 
+    void refresh() {
+        fetchPhotos(mQuery.getValue());
+    }
+
     LiveData<Pair<Resource<List<Photo>>, String>> getResults() {
         return mResults;
     }

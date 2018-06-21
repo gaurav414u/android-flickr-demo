@@ -77,7 +77,6 @@ public class HomeActivity extends AppCompatActivity {
         mSearchView.setRawInputType(InputType.TYPE_CLASS_TEXT);
         mSearchView.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                //mViewModel.search(v.getText().toString());
                 dismissKeyboard(v.getWindowToken());
                 mHomeViewModel.fetchPhotos(mSearchView.getText().toString());
                 return true;
@@ -170,10 +169,13 @@ public class HomeActivity extends AppCompatActivity {
     private void showError(String message){
         mStatusLayout.setVisibility(View.VISIBLE);
         mProgressBar.setVisibility(View.GONE);
-        mMessageView.setText(message);
+        mMessageView.setText(message + "\n Tap here to retry");
+        mStatusLayout.setOnClickListener((view) -> {
+            mHomeViewModel.refresh();
+            mStatusLayout.setOnClickListener(null);
+        });
         mErrorImageView.setVisibility(View.VISIBLE);
     }
-
 
     private void showResults(List<Photo> photoList, String query) {
         if (query.equals("")) {

@@ -10,5 +10,6 @@
                android:id="@+id/image_photo"
                tools:src="@tools:sample/avatars"
                android:scaleType="centerCrop"
+               android:background="#1F000000"
     />
 </com.gauravbhola.flickry.ui.common.SquareFrameLayout>

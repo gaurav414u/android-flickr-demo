@@ -15,7 +15,7 @@ import retrofit2.Response;
 
 public class GetRecentPhotosTask implements Runnable {
     private FlickrApiService mFlickrApiService;
-    private String mQuery;
+    protected String mQuery;
     private MutableLiveData<Resource<PhotosResponse>> mLiveData;
     private int mPage;
     private int mPerPage;

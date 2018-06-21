@@ -29,18 +29,15 @@ public class HomeViewModel extends AndroidViewModel {
         mImagesRepository = imagesRepository;
         mFlickrApiService = flickrApiService;
 
-        mResults = Transformations.switchMap(mQuery, (query) -> {
-//            if (query.equals("") || query.trim().equals("")) {
-//                return AbsentLiveData.create();
-//            }
-            return Transformations.map(mImagesRepository.getPhotos(query), (val) -> {
-                if (val.data == null) {
+        mResults = Transformations.switchMap(mQuery, (query) ->
+                Transformations.map(mImagesRepository.getPhotos(query), (val) -> {
+                    if (val.data == null) {
+                        return new Pair<>(val, query);
+                    }
+                    injectUrl(val.data);
                     return new Pair<>(val, query);
-                }
-                injectUrl(val.data);
-                return new Pair<>(val, query);
-            });
-        });
+                })
+        );
     }
 
     private void injectUrl(List<Photo> photos) {

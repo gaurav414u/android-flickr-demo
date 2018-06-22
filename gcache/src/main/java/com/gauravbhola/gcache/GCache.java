@@ -13,45 +13,55 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 /**
- * Image caching class
+ * GCache ('G'aurav :D 'Cache') Image caching class
  */
 public class GCache {
-    private static Executor sExecutor = Executors.newFixedThreadPool(4);
-    private static BitmapLruCache sLruCache = new MemoryLruCache();
+    private static Executor sExecutor = Executors.newFixedThreadPool(3);
+    private static Executor sLoadExecutor = Executors.newSingleThreadExecutor();
     private static Map<ImageView, GCacheTask> sImageViewTasks = new HashMap<>();
     static Handler sMainHandler = new Handler();
+    private static BitmapLruCache sLruCache;
 
     public static GCacheRequestBuilder with(Context context) {
+        if (sLruCache == null) {
+            sLruCache = new DiskLruCache(context);
+        }
         return new GCacheRequestBuilder();
     }
 
     @UiThread
     static void load(GCacheRequestBuilder requestBuilder) {
-        // If bitmap is present in cache
-        if (sLruCache.get(requestBuilder.getUrl()) != null) {
-            showImage(requestBuilder,sLruCache.get(requestBuilder.getUrl()));
-            return;
-        }
-
         // If there is an existing task for this image view, cancel that task
         if (sImageViewTasks.containsKey(requestBuilder.getImageViewWeakReference().get())) {
             sImageViewTasks.get(requestBuilder.getImageViewWeakReference().get()).cancel();
             sImageViewTasks.remove(requestBuilder.getImageViewWeakReference().get());
         }
 
-        GCacheTask task = new GCacheTask(requestBuilder, sLruCache, (imageView) -> {
-            if (imageView != null && sImageViewTasks.containsKey(imageView)) {
-                sImageViewTasks.remove(imageView);
+        // Take it off the main thread, as sLruCache's methods are synchronized
+        sLoadExecutor.execute(() -> {
+            // If bitmap is present in cache, no need to do fancy stuff
+            if (sLruCache.get(requestBuilder.getUrl()) != null) {
+                showImage(requestBuilder,sLruCache.get(requestBuilder.getUrl()));
+                return;
             }
+            GCacheTask task = new GCacheTask(requestBuilder, sLruCache, (imageView) -> {
+                sMainHandler.post(() -> {
+                    // To ensure sImageViewTasks is handled by a single thread only
+                    if (imageView != null && sImageViewTasks.containsKey(imageView)) {
+                        sImageViewTasks.remove(imageView);
+                    }
+                });
+            });
+            sImageViewTasks.put(requestBuilder.getImageViewWeakReference().get(), task);
+            sExecutor.execute(task);
         });
-        sImageViewTasks.put(requestBuilder.getImageViewWeakReference().get(), task);
-        sExecutor.execute(task);
     }
 
-    @UiThread
     private static void showImage(GCacheRequestBuilder requestBuilder, Bitmap bitmap) {
-        if (requestBuilder.getImageViewWeakReference().get() != null) {
-            requestBuilder.getImageViewWeakReference().get().setImageBitmap(bitmap);
-        }
+        sMainHandler.post(() -> {
+            if (requestBuilder.getImageViewWeakReference().get() != null) {
+                requestBuilder.getImageViewWeakReference().get().setImageBitmap(bitmap);
+            }
+        });
     }
 }

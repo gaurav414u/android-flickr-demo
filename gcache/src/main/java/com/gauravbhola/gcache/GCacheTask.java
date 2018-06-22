@@ -63,9 +63,7 @@ public class GCacheTask implements Runnable {
 
     public void done() {
         if (mDoneCallback != null) {
-            GCache.sMainHandler.post(() -> {
-                mDoneCallback.done(mRequestBuilder.getImageViewWeakReference().get());
-            });
+            mDoneCallback.done(mRequestBuilder.getImageViewWeakReference().get());
         }
     }
 

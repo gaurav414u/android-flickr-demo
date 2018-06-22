@@ -36,6 +36,7 @@
                 tools:listitem="@layout/item_photo"
                 tools:layoutManager="android.support.v7.widget.GridLayoutManager"
                 tools:spanCount="3"
+                android:scrollbars="vertical"
                 android:id="@+id/recycler_view_pics">
         </android.support.v7.widget.RecyclerView>
 

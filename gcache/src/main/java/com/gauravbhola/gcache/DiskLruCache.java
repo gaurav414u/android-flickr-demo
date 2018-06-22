@@ -107,11 +107,7 @@ public class DiskLruCache implements BitmapLruCache, LRUCache.ItemRemoveCallback
         String fileName = item + "";
         File file = new File(mStoragePath + File.separator + fileName);
         if (file.exists()) {
-            if (file.delete()) {
-                System.out.println("file Deleted :" + fileName);
-            } else {
-                System.out.println("file not Deleted :" + fileName);
-            }
+            file.delete();
         }
     }
 

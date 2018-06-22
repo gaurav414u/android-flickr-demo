@@ -17,7 +17,7 @@ import java.util.concurrent.Executors;
  */
 public class GCache {
     private static Executor sExecutor = Executors.newFixedThreadPool(4);
-    private static BitmapLruCache sLruCache = new MemoryBitmapCache();
+    private static BitmapLruCache sLruCache = new MemoryLruCache();
     private static Map<ImageView, GCacheTask> sImageViewTasks = new HashMap<>();
     static Handler sMainHandler = new Handler();
 

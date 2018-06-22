@@ -4,7 +4,7 @@ package com.gauravbhola.gcache;
 import android.graphics.Bitmap;
 import android.util.LruCache;
 
-public class MemoryBitmapCache implements BitmapLruCache{
+public class MemoryLruCache implements BitmapLruCache{
     LruCache<String, Bitmap> mLruCache = new LruCache<>(50);
     Object lock = new Object();
 

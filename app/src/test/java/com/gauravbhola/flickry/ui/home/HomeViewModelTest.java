@@ -4,6 +4,7 @@ package com.gauravbhola.flickry.ui.home;
 import com.gauravbhola.flickry.data.ImagesRepository;
 import com.gauravbhola.flickry.data.model.Photo;
 import com.gauravbhola.flickry.data.model.Resource;
+import com.gauravbhola.flickry.data.remote.GetRecentResponse;
 import com.gauravbhola.flickry.data.remote.PhotosResponse;
 
 import org.hamcrest.Matchers;
@@ -25,6 +26,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.os.Handler;
+import android.support.v4.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,7 +96,7 @@ public class HomeViewModelTest {
 
 
     @Test
-    public void fetchPhotos() {
+    public void fetchPhotosFromRepository() {
         LiveData<Resource<PhotosResponse>> resourceLiveData = new MutableLiveData<>();
         when(mImagesRepository.getPhotos(anyString()))
                 .thenReturn(resourceLiveData);
@@ -105,6 +107,19 @@ public class HomeViewModelTest {
 
         mHomeViewModel.fetchPhotos("asd");
         verify(mImagesRepository).getPhotos("asd");
+    }
+
+    private PhotosResponse getMockPhotosRepsonse() {
+         List<Photo> photoList = new ArrayList<>();
+        Photo photo = new Photo();
+        photo.setFarm(123);
+        photo.setServer("server");
+        photo.setId("id");
+        photo.setSecret("secret");
+        photoList.add(photo);
+        PhotosResponse response = new PhotosResponse();
+        response.setPhoto(photoList);
+        return response;
     }
 
     @Test
@@ -120,5 +135,60 @@ public class HomeViewModelTest {
         mHomeViewModel.fetchPhotos("123");
         mHomeViewModel.refresh();
         verify(mImagesRepository, times(2)).getPhotos("123");
+    }
+
+    @Test
+    public void loadingPhotos() {
+        MutableLiveData<Resource<PhotosResponse>> resourceLiveData = new MutableLiveData<>();
+        resourceLiveData.setValue(Resource.loading(null));
+        when(mImagesRepository.getPhotos(anyString()))
+                .thenReturn(resourceLiveData);
+
+        Observer resultsObserver = mock(Observer.class);
+        Observer resultStateObserver = mock(Observer.class);
+
+        mHomeViewModel.getResultsState().observeForever(resultStateObserver);
+        mHomeViewModel.getLoadMoreState().observeForever(mock(Observer.class));
+        mHomeViewModel.getAllResults().observeForever(resultsObserver);
+
+        mHomeViewModel.fetchPhotos("asd");
+        verify(mImagesRepository).getPhotos("asd");
+
+        Pair expectedState = new Pair(Resource.loading(null), "asd");
+
+        verify(resultStateObserver).onChanged(expectedState);
+        verify(resultsObserver).onChanged(null);
+
+        verifyNoMoreInteractions(resultsObserver);
+        verifyNoMoreInteractions(mImagesRepository);
+    }
+
+    @Test
+    public void photosSuccess() {
+        MutableLiveData<Resource<PhotosResponse>> resourceLiveData = new MutableLiveData<>();
+
+        PhotosResponse r = getMockPhotosRepsonse();
+        resourceLiveData.setValue(Resource.success(r));
+
+        when(mImagesRepository.getPhotos(anyString()))
+                .thenReturn(resourceLiveData);
+
+        Observer resultsObserver = mock(Observer.class);
+        Observer resultStateObserver = mock(Observer.class);
+        mHomeViewModel.getResultsState().observeForever(resultStateObserver);
+        mHomeViewModel.getLoadMoreState().observeForever(mock(Observer.class));
+        mHomeViewModel.getAllResults().observeForever(resultsObserver);
+
+        mHomeViewModel.fetchPhotos("asd");
+        verify(mImagesRepository).getPhotos("asd");
+
+        Pair expectedState = new Pair(Resource.success(r), "asd");
+        verify(resultStateObserver).onChanged(expectedState);
+
+        Pair expectedResults = new Pair(r.getPhoto(), "asd");
+        verify(resultsObserver).onChanged(expectedResults);
+
+        verifyNoMoreInteractions(resultsObserver);
+        verifyNoMoreInteractions(mImagesRepository);
     }
 }

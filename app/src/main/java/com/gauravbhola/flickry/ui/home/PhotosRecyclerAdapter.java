@@ -3,7 +3,9 @@ package com.gauravbhola.flickry.ui.home;
 
 import com.gauravbhola.flickry.R;
 import com.gauravbhola.flickry.data.model.Photo;
+import com.gauravbhola.gcache.GCache;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,14 +44,21 @@ public class PhotosRecyclerAdapter extends RecyclerView.Adapter<PhotosRecyclerAd
 
     public static class PhotoViewHolder extends RecyclerView.ViewHolder {
         private ImageView mPhotoImage;
+        private Context mContext;
 
         public PhotoViewHolder(View itemView) {
             super(itemView);
             mPhotoImage = itemView.findViewById(R.id.image_photo);
+            mContext = itemView.getContext();
         }
 
         public void bind(Photo photo) {
             // Use image loader
+            GCache.with(mContext).load(photo.getUrl())
+                    .into(mPhotoImage);
+
+//            Glide.with(mContext).load(photo.getUrl())
+//                    .into(mPhotoImage);
         }
 
         @Override

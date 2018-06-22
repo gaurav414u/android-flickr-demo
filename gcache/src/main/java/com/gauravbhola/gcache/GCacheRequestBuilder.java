@@ -1,6 +1,7 @@
 package com.gauravbhola.gcache;
 
 
+import android.support.annotation.UiThread;
 import android.widget.ImageView;
 
 import java.lang.ref.WeakReference;
@@ -12,11 +13,13 @@ public class GCacheRequestBuilder {
     protected GCacheRequestBuilder() {
     }
 
+    @UiThread
     public GCacheRequestBuilder load(String url) {
         this.mUrl = url;
         return this;
     }
 
+    @UiThread
     public void into(ImageView imageView) {
         mImageViewWeakReference = new WeakReference<ImageView>(imageView);
         // Clear existing image

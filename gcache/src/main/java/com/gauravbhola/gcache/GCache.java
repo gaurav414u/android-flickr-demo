@@ -25,6 +25,7 @@ public class GCache {
         return new GCacheRequestBuilder();
     }
 
+    @UiThread
     static void load(GCacheRequestBuilder requestBuilder) {
         // If bitmap is present in cache
         if (sLruCache.get(requestBuilder.getUrl()) != null) {

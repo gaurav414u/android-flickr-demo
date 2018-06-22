@@ -34,11 +34,14 @@ public class GCacheTask implements Runnable {
         if (mIsCancelled) {
             return;
         }
+
         if (mLruCache.contains(mRequestBuilder.getUrl())) {
             // If present in cache, update
             showImage(mLruCache.get(mRequestBuilder.getUrl()));
+            done();
             return;
         }
+
         if (mIsCancelled) {
             return;
         }
@@ -55,8 +58,14 @@ public class GCacheTask implements Runnable {
             mLruCache.put(mRequestBuilder.getUrl(), b);
             showImage(b);
         }
+        done();
+    }
+
+    public void done() {
         if (mDoneCallback != null) {
-            mDoneCallback.done(mRequestBuilder.getImageViewWeakReference().get());
+            GCache.sMainHandler.post(() -> {
+                mDoneCallback.done(mRequestBuilder.getImageViewWeakReference().get());
+            });
         }
     }
 

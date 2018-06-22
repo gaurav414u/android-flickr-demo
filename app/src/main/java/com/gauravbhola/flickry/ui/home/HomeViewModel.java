@@ -20,11 +20,11 @@ import java.util.List;
 
 public class HomeViewModel extends AndroidViewModel {
     private ImagesRepository mImagesRepository;
-    private MutableLiveData<String> mQuery = new MutableLiveData<>();
+    protected MutableLiveData<String> mQuery = new MutableLiveData<>();
     private MutableLiveData<String> mLoadMoreWithQuery = new MutableLiveData<>();
     private LiveData<Pair<Resource<PhotosResponse>, String>> mResultsState;
     private MediatorLiveData<Pair<List<Photo>, String>> mAllResults;
-    private Handler mHandler = new Handler();
+    protected Handler mHandler = new Handler();
     private int mCurrentPage;
     private LiveData<Pair<Resource<PhotosResponse>, String>> mLoadMoreState;
 
@@ -70,7 +70,7 @@ public class HomeViewModel extends AndroidViewModel {
 
     }
 
-    private void injectUrl(PhotosResponse response) {
+    void injectUrl(PhotosResponse response) {
         List<Photo> photos = response.getPhoto();
         for (Photo photo : photos) {
             photo.setUrl(String.format("https://farm%d.staticflickr.com/%s/%s_%s.jpg",
@@ -88,6 +88,7 @@ public class HomeViewModel extends AndroidViewModel {
         // Last known query is equal to this query
         // and result state is success, then don't do anything
         if (query.equals(mQuery.getValue())
+                && mResultsState.getValue() != null
                 && mResultsState.getValue().first != null
                 && query.equals(mResultsState.getValue().second)
                 && mResultsState.getValue().first.status == Resource.Status.SUCCESS) {
@@ -132,15 +133,18 @@ public class HomeViewModel extends AndroidViewModel {
         fetchPhotos(mQuery.getValue());
     }
 
+    @NonNull
     public LiveData<Pair<Resource<PhotosResponse>, String>> getResultsState() {
         return mResultsState;
     }
 
 
+    @NonNull
     public MediatorLiveData<Pair<List<Photo>, String>> getAllResults() {
         return mAllResults;
     }
 
+    @NonNull
     public LiveData<Pair<Resource<PhotosResponse>, String>> getLoadMoreState() {
         return mLoadMoreState;
     }

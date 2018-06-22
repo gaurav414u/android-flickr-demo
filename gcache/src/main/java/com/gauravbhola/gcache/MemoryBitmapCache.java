@@ -10,7 +10,9 @@ public class MemoryBitmapCache implements BitmapLruCache{
 
     @Override
     public boolean contains(String key) {
-        return mLruCache.get(key) != null;
+        synchronized (lock) {
+            return mLruCache.get(key) != null;
+        }
     }
 
     @Override

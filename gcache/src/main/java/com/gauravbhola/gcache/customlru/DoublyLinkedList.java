@@ -65,7 +65,7 @@ public class DoublyLinkedList {
             tail = tmp;
         }
         size++;
-        System.out.println("adding: " + tmp.key + ", "+tmp.element);
+//        System.out.println("adding: " + tmp.key + ", "+tmp.element);
         return tmp;
     }
      
@@ -80,7 +80,7 @@ public class DoublyLinkedList {
         tail = tmp;
         if(head == null) { head = tmp;}
         size++;
-        System.out.println("adding: "+element);
+//        System.out.println("adding: "+element);
     }
      
     /**

@@ -31,6 +31,9 @@ public class GCache {
 
     @UiThread
     static void load(GCacheRequestBuilder requestBuilder) {
+        // Clear existing image
+        requestBuilder.getImageViewWeakReference().get().setImageResource(0);
+
         // If there is an existing task for this image view, cancel that task
         if (sImageViewTasks.containsKey(requestBuilder.getImageViewWeakReference().get())) {
             sImageViewTasks.get(requestBuilder.getImageViewWeakReference().get()).cancel();

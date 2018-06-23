@@ -22,8 +22,6 @@ public class GCacheRequestBuilder {
     @UiThread
     public void into(ImageView imageView) {
         mImageViewWeakReference = new WeakReference<ImageView>(imageView);
-        // Clear existing image
-        imageView.setImageResource(0);
         GCache.load(this);
     }
 

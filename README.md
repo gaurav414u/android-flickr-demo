@@ -4,9 +4,10 @@ android-flickr-demo
 This is a sample app crafted for fun and learning. It uses the api from flickr which is documented here [FlickApi](https://www.flickr.com/services/api/).
 
 # Modules
-1. [Flickry](#Flickry) - The Sample App
-2. [GCache](#GCache) - Custom made image caching library
+1. [Flickry](#flickry) - The Sample App
+2. [GCache](#gcache) - Custom made image caching library
 
+<a name="flickry"></a>
 # Flickry
 
 The app uses the MVVM architecture implemented using [Android Arch Components](https://developer.android.com/topic/libraries/architecture/)
@@ -79,8 +80,8 @@ Local unit tests can be found for `HomeViewModel`, `SplashViewModel`, `ApiRespon
 [recentphotostask_link]: https://github.com/gaurav414u/android-flickr-demo/blob/master/app/src/main/java/com/gauravbhola/flickry/util/GetRecentPhotosTask.java
 [resource_link]: https://github.com/gaurav414u/android-flickr-demo/blob/master/app/src/main/java/com/gauravbhola/flickry/data/model/Resource.java
 
-
-# GCache
+<a name="gcache"></a>
+# GCache 
 GCache is a custom made image caching library which uses Disk and Memory caching together. Its built expicitly for Flickry and is fairly simple to use.
 
 Use

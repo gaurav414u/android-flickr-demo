@@ -12,7 +12,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class DiskLruCache implements BitmapLruCache, LRUCache.ItemRemoveCallback {
+public class DiskBackedLruCache implements BitmapLruCache, LRUCache.ItemRemoveCallback {
     public static final String CACHE_SUB_DIR = "imagecache";
     private LruCache<String, Bitmap> mLruCache = new LruCache<>(50);
     private LRUCache mDiskBoundCache = new LRUCache(500, this);
@@ -20,7 +20,7 @@ public class DiskLruCache implements BitmapLruCache, LRUCache.ItemRemoveCallback
     private Context mContext;
 
 
-    protected DiskLruCache(Context context) {
+    protected DiskBackedLruCache(Context context) {
         mContext = context;
         mStoragePath = mContext.getCacheDir().getPath() + File.separator + CACHE_SUB_DIR;
         this.buildDiskBoundCache();

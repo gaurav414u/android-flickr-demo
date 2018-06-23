@@ -24,7 +24,7 @@ public class GCache {
 
     public static GCacheRequestBuilder with(Context context) {
         if (sLruCache == null) {
-            sLruCache = new DiskLruCache(context);
+            sLruCache = new DiskBackedLruCache(context);
         }
         return new GCacheRequestBuilder();
     }

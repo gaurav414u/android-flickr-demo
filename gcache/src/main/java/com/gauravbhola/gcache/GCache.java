@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -18,7 +19,7 @@ import java.util.concurrent.Executors;
 public class GCache {
     private static Executor sExecutor = Executors.newFixedThreadPool(3);
     private static Executor sLoadExecutor = Executors.newSingleThreadExecutor();
-    private static Map<ImageView, GCacheTask> sImageViewTasks = new HashMap<>();
+    private static WeakHashMap<ImageView, GCacheTask> sImageViewTasks = new WeakHashMap<>();
     static Handler sMainHandler = new Handler();
     private static BitmapLruCache sLruCache;
 

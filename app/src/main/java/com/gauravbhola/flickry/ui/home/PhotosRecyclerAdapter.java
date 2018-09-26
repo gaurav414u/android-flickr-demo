@@ -19,6 +19,7 @@ public class PhotosRecyclerAdapter extends RecyclerView.Adapter<PhotosRecyclerAd
 
     public PhotosRecyclerAdapter() {
         super();
+        setHasStableIds(true);
     }
 
     public void setPhotoList(List<Photo> photoList) {
@@ -40,6 +41,11 @@ public class PhotosRecyclerAdapter extends RecyclerView.Adapter<PhotosRecyclerAd
     @Override
     public int getItemCount() {
         return mPhotoList != null ? mPhotoList.size() : 0;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return Long.parseLong(mPhotoList.get(position).getId());
     }
 
     public static class PhotoViewHolder extends RecyclerView.ViewHolder {

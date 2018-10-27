@@ -4,11 +4,9 @@ package com.gauravbhola.gcache;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
-import android.support.annotation.UiThread;
+import androidx.annotation.UiThread;
 import android.widget.ImageView;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;

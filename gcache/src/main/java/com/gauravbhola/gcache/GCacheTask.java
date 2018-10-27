@@ -3,7 +3,7 @@ package com.gauravbhola.gcache;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.WorkerThread;
 import android.widget.ImageView;
 
 import java.io.IOException;

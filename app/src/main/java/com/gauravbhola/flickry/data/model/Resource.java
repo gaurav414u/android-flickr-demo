@@ -1,8 +1,8 @@
 package com.gauravbhola.flickry.data.model;
 
-import android.arch.lifecycle.LiveData;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.lifecycle.LiveData;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * A generic class that holds a value with its loading status.

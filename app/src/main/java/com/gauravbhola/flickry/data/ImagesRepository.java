@@ -7,7 +7,7 @@ import com.gauravbhola.flickry.data.remote.PhotosResponse;
 import com.gauravbhola.flickry.util.GetRecentPhotosTask;
 
 import android.app.Application;
-import android.arch.lifecycle.LiveData;
+import androidx.lifecycle.LiveData;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;

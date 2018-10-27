@@ -1,7 +1,7 @@
 package com.gauravbhola.gcache;
 
 
-import android.support.annotation.UiThread;
+import androidx.annotation.UiThread;
 import android.widget.ImageView;
 
 import java.lang.ref.WeakReference;

@@ -6,8 +6,8 @@ import com.gauravbhola.flickry.data.remote.FlickrApiService;
 import com.gauravbhola.flickry.data.remote.GetRecentResponse;
 import com.gauravbhola.flickry.data.remote.PhotosResponse;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 
 import retrofit2.Call;

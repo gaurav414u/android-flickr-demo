@@ -2,7 +2,7 @@ package com.gauravbhola.flickry.util;
 
 import com.gauravbhola.flickry.data.remote.GetRecentResponse;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import java.io.IOException;
 
 

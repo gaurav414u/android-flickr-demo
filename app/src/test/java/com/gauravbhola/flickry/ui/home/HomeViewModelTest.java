@@ -4,7 +4,6 @@ package com.gauravbhola.flickry.ui.home;
 import com.gauravbhola.flickry.data.ImagesRepository;
 import com.gauravbhola.flickry.data.model.Photo;
 import com.gauravbhola.flickry.data.model.Resource;
-import com.gauravbhola.flickry.data.remote.GetRecentResponse;
 import com.gauravbhola.flickry.data.remote.PhotosResponse;
 
 import org.hamcrest.Matchers;
@@ -12,7 +11,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
@@ -21,12 +19,12 @@ import static org.hamcrest.MatcherAssert.*;
 import static org.mockito.Mockito.*;
 
 import android.app.Application;
-import android.arch.core.executor.testing.InstantTaskExecutorRule;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import android.os.Handler;
-import android.support.v4.util.Pair;
+import androidx.core.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;

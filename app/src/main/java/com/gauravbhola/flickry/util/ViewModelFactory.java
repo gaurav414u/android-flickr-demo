@@ -5,9 +5,9 @@ import com.gauravbhola.flickry.ui.home.HomeViewModel;
 import com.gauravbhola.flickry.ui.splash.SplashViewModel;
 
 import android.app.Application;
-import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProvider;
-import android.support.annotation.NonNull;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.annotation.NonNull;
 
 public class ViewModelFactory implements ViewModelProvider.Factory {
     private ImagesRepository mImagesRepository;
